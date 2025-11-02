@@ -45,11 +45,22 @@ struct YahooMeta: DataMeta, Decodable {
 }
 
 enum YahooInterval: CustomStringConvertible {
+    case hour1
     case day1
-
+    
+    init(_ interval: Interval) {
+        switch interval {
+        case .hour1:
+            self = .hour1
+        case .day1:
+            self = .day1
+        }
+    }
+    
     var description: String {
         switch self {
-            case .day1: return "1d"
+        case .hour1: return "1h"
+        case .day1: return "1d"
         }
     }
 }
