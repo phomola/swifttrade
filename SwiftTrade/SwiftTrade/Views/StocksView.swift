@@ -29,8 +29,17 @@ struct StocksView: View {
                 if let from = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: from)) {
                     if let to = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: to)) {
                         let to = to.addingTimeInterval(24 * 60 * 60 - 1)
-                        print("\(from)")
-                        print("\(to)")
+                        Task {
+                            do {
+                                let (candles, meta) = try await fetchYahooData(symbol: "AAPL", from: from, to: to, interval: interval)
+                                print("\(meta.currency) \(meta.fullExchangeName)")
+                                for candle in candles {
+                                    print("\(candle.timestamp) \(candle.volume) \(candle.low) \(candle.open) \(candle.close) \(candle.high)")
+                                }
+                            } catch {
+                                print("error: \(error.localizedDescription)")
+                            }
+                        }
                     }
                 }
             }
