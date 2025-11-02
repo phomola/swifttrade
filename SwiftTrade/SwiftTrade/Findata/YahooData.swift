@@ -65,7 +65,8 @@ enum YahooInterval: CustomStringConvertible {
     }
 }
 
-func fetchYahooData(symbol: String, from: Date, to: Date, interval: YahooInterval) async throws -> ([Candle], DataMeta) {
+func fetchYahooData(symbol: String, from: Date, to: Date, interval: Interval) async throws -> ([Candle], DataMeta) {
+    let interval = YahooInterval(interval)
     guard let url = URL(string: "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?period1=\(Int(from.timeIntervalSince1970))&period2=\(Int(to.timeIntervalSince1970))&interval=\(interval)") else {
         throw RuntimeError.badUrl
     }
