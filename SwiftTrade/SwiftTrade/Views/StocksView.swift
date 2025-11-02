@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CloudKit
+import Charts
 
 let allIntervals: [Interval] = [.hour1, .day1]
 let allSymbols: [Symbol] = [Symbol(text: "AAPL"), Symbol(text: "MSFT"), Symbol(text: "GOOGL")]
@@ -18,9 +19,20 @@ struct StocksView: View {
     @State private var interval: Interval = .day1
     @State private var isWorking = false
     @State private var errorWrapper: ErrorWrapper?
+    @State private var chartData: ChartData?
 
     var body: some View {
         VStack {
+            if let data = chartData {
+                Chart(data.candles) { candle in
+//                    ForEach(candles) { candle in
+                        LineMark(x: .value("timestamp", candle.timestamp), y: .value("close", candle.close))
+                        .foregroundStyle(by: .value("type", "close"))
+                        .symbol(by: .value("type", "close"))
+//                    }
+                }
+                .chartYScale(domain: data.minClose...data.maxClose)
+            }
             //TextField("symbol", text: $symbol, prompt: Text("symbol"))
             Picker("symbol", selection: $symbol) {
                 ForEach(allSymbols) { symbol in
@@ -57,6 +69,7 @@ struct StocksView: View {
                                     print("\(candle.timestamp) \(candle.volume) \(candle.low) \(candle.open) \(candle.close) \(candle.high)")
                                 }
                                 print(candles.count)
+                                chartData = ChartData(candles: candles)
                             } catch {
                                 print("error: \(error.localizedDescription)")
                                 errorWrapper = ErrorWrapper(error: error, guidance: "Failed to fetch data.")
