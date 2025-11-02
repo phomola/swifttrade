@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CloudKit
 
 let allIntervals: [Interval] = [.hour1, .day1]
 let allSymbols: [Symbol] = [Symbol(text: "AAPL"), Symbol(text: "MSFT"), Symbol(text: "GOOGL")]
@@ -26,8 +27,17 @@ struct StocksView: View {
                     Text(symbol.text)
                 }
             }
+            .onChange(of: symbol) {
+                NSUbiquitousKeyValueStore.default.set(symbol, forKey: "symbol")
+            }
             DatePicker("from", selection: $from, displayedComponents: .date)
+                .onChange(of: from) {
+                    NSUbiquitousKeyValueStore.default.set(from.timeIntervalSince1970, forKey: "from")
+                }
             DatePicker("to", selection: $to, displayedComponents: .date)
+                .onChange(of: to) {
+                    NSUbiquitousKeyValueStore.default.set(to.timeIntervalSince1970, forKey: "to")
+                }
             Picker("interval", selection: $interval) {
                 ForEach(allIntervals) { interval in
                     Text(interval.localizedStringKey)
@@ -38,6 +48,8 @@ struct StocksView: View {
                     if let to = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: to)) {
                         let to = to.addingTimeInterval(24 * 60 * 60 - 1)
                         Task {
+                            isWorking = true
+                            defer { isWorking = false }
                             do {
                                 let (candles, meta) = try await fetchYahooData(symbol: symbol, from: from, to: to, interval: interval)
                                 print("\(meta.currency) \(meta.fullExchangeName)")
@@ -57,6 +69,20 @@ struct StocksView: View {
             .disabled(isWorking || symbol.isEmpty)
         }
         .padding()
+        .onAppear {
+            let store = NSUbiquitousKeyValueStore.default
+            if let symbol = store.string(forKey: "symbol") {
+                self.symbol = symbol
+            }
+            let from = store.double(forKey: "from")
+            if from != 0 {
+                self.from = Date(timeIntervalSince1970: from)
+            }
+            let to = store.double(forKey: "to")
+            if to != 0 {
+                self.to = Date(timeIntervalSince1970: to)
+            }
+        }
         .sheet(item: $errorWrapper) { wrapper in
             ErrorView(errorWrapper: wrapper)
         }
