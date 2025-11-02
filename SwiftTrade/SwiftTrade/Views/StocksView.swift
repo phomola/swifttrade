@@ -73,6 +73,8 @@ struct StocksView: View {
                         print("error: \(error.localizedDescription)")
                         errorWrapper = ErrorWrapper(error: error, guidance: "Failed to fetch data.")
                     }
+                    //                        }
+                    //                    }
                 }
             }
             .buttonStyle(.borderedProminent)
