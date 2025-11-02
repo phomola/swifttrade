@@ -12,6 +12,20 @@ enum RuntimeError: Error {
     case badDateTime
 }
 
+enum Interval: Identifiable, CustomStringConvertible {
+    case hour1
+    case day1
+    
+    var id: Self { self }
+    
+    var description: String {
+        switch self {
+        case .hour1: return "1 hour"
+        case .day1: return "1 day"
+        }
+    }
+}
+
 protocol DataMeta {
     var currency: String { get }
     var fullExchangeName: String { get }
