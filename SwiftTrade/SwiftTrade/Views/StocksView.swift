@@ -82,6 +82,10 @@ struct StocksView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(isWorking || symbol.isEmpty)
+            Button("js_exper") {
+                jsExper()
+            }
+            .buttonStyle(.bordered)
         }
         .padding()
         .onAppear {
