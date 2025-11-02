@@ -1,5 +1,10 @@
 import Foundation
 
+protocol DataMeta {
+    var currency: String { get }
+    var fullExchangeName: String { get }
+}
+
 struct Candle {
     let timestamp: Date
     let volume: Float64
@@ -35,7 +40,7 @@ struct YahooQuote: Decodable {
     let high: [Float64]
 }
 
-struct YahooMeta: Decodable {
+struct YahooMeta: DataMeta, Decodable {
     let currency: String
     let symbol: String
     let exchangeName: String
@@ -51,7 +56,7 @@ enum RuntimeError: Error {
     case badDateTime
 }
 
-func fetchYahooData(symbol: String, from: Date, to: Date, interval: String) async throws -> ([Candle], YahooMeta) {
+func fetchYahooData(symbol: String, from: Date, to: Date, interval: String) async throws -> ([Candle], DataMeta) {
     guard let url = URL(string: "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?period1=\(Int(from.timeIntervalSince1970))&period2=\(Int(to.timeIntervalSince1970))&interval=\(interval)") else {
         throw RuntimeError.badUrl
     }
@@ -67,6 +72,7 @@ func fetchYahooData(symbol: String, from: Date, to: Date, interval: String) asyn
     let low = response.chart.result[0].indicators.quote[0].low
     let high = response.chart.result[0].indicators.quote[0].high
     var candles: [Candle] = []
+    candles.reserveCapacity(timestamps.count)
     for (i, timestamp) in timestamps.enumerated() {
         candles.append(Candle(timestamp: Date(timeIntervalSince1970: Float64(timestamp)), volume: volume[i], open: open[i], close: close[i], low: low[i], high: high[i]))
     }
