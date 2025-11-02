@@ -19,7 +19,7 @@ struct StocksView: View {
             DatePicker("to", selection: $to, displayedComponents: .date)
             Picker("interval", selection: $interval) {
                 ForEach(intervals) { interval in
-                    Text(verbatim: "\(interval)").tag(interval)
+                    Text(interval.localizedStringKey).tag(interval)
                 }
             }
             .onChange(of: interval) {

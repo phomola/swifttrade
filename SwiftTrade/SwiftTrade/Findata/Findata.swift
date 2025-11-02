@@ -6,22 +6,23 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum RuntimeError: Error {
     case badUrl
     case badDateTime
 }
 
-enum Interval: Identifiable, CustomStringConvertible {
+enum Interval: Identifiable {
     case hour1
     case day1
     
     var id: Self { self }
     
-    var description: String {
+    var localizedStringKey: LocalizedStringKey {
         switch self {
-        case .hour1: return "1 hour"
-        case .day1: return "1 day"
+        case .hour1: return LocalizedStringKey("1hour")
+        case .day1: return LocalizedStringKey("1day")
         }
     }
 }
