@@ -32,11 +32,13 @@ protocol DataMeta {
     var fullExchangeName: String { get }
 }
 
-struct Candle {
+struct Candle: Identifiable {
     let timestamp: Date
     let volume: Float64
     let open: Float64
     let close: Float64
     let low: Float64
     let high: Float64
+    
+    var id: Date { timestamp }
 }
