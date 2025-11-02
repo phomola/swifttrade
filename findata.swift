@@ -1,5 +1,10 @@
 import Foundation
 
+enum RuntimeError: Error {
+    case badUrl
+    case badDateTime
+}
+
 protocol DataMeta {
     var currency: String { get }
     var fullExchangeName: String { get }
@@ -51,12 +56,17 @@ struct YahooMeta: DataMeta, Decodable {
     let shortName: String
 }
 
-enum RuntimeError: Error {
-    case badUrl
-    case badDateTime
+enum YahooInterval: CustomStringConvertible {
+    case day1
+
+    var description: String {
+        switch self {
+            case .day1: return "1d"
+        }
+    }
 }
 
-func fetchYahooData(symbol: String, from: Date, to: Date, interval: String) async throws -> ([Candle], DataMeta) {
+func fetchYahooData(symbol: String, from: Date, to: Date, interval: YahooInterval) async throws -> ([Candle], DataMeta) {
     guard let url = URL(string: "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?period1=\(Int(from.timeIntervalSince1970))&period2=\(Int(to.timeIntervalSince1970))&interval=\(interval)") else {
         throw RuntimeError.badUrl
     }
