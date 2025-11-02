@@ -28,7 +28,7 @@ struct StocksView: View {
 //                    ForEach(candles) { candle in
                         LineMark(x: .value("timestamp", candle.timestamp), y: .value("close", candle.close))
                         .foregroundStyle(by: .value("type", "close"))
-                        .symbol(by: .value("type", "close"))
+//                        .symbol(by: .value("type", "close"))
 //                    }
                 }
                 .chartYScale(domain: data.minClose...data.maxClose)
