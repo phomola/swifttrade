@@ -18,7 +18,7 @@ struct ChartData {
         return min
     }
     var maxClose: Float64 {
-        var max = Float64.leastNormalMagnitude
+        var max = -Float64.greatestFiniteMagnitude
         for candle in candles {
             if candle.close > max { max = candle.close }
         }
