@@ -9,7 +9,7 @@ import Foundation
 import JavaScriptCore
 
 @objc protocol FloatArrayJS: JSExport {
-    func length() -> Int
+    var length: Int { get }
     func get(_ index: Int) -> Float64
 }
 
@@ -20,7 +20,7 @@ class FloatArray: NSObject, FloatArrayJS {
         self.data = data
     }
     
-    func length() -> Int {
+    var length: Int {
         data.count
     }
     
@@ -33,11 +33,9 @@ class FloatArray: NSObject, FloatArrayJS {
 
 func jsExper() {
     if let context = JSContext(virtualMachine: JSVirtualMachine()) {
-        if let function = context.evaluateScript("(function(array) { return array.length() })") {
-            print(function)
+        if let function = context.evaluateScript("(function(array) { return array.length })") {
             if let value = function.call(withArguments: [FloatArray(data: [1, 2, 3])]) {
-                print(value)
-                if let value = value.toObject() as? FloatArray {
+                if let value = value.toNumber() {
                     print("\(value) \(type(of: value))")
                 }
             }
