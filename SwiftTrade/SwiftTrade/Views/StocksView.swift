@@ -61,8 +61,8 @@ struct StocksView: View {
                 //                if let from = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: from)) {
                 //                    if let to = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: to)) {
                 //                        let to = to.addingTimeInterval(24 * 60 * 60 - 1)
+                isWorking = true
                 Task {
-                    isWorking = true
                     defer { isWorking = false }
                     do {
                         let (candles, meta) = try await fetchYahooData(symbol: symbol, from: from, to: to, interval: interval)
@@ -84,6 +84,10 @@ struct StocksView: View {
             .disabled(isWorking || symbol.isEmpty)
             Button("js_exper") {
                 jsExper()
+            }
+            .buttonStyle(.bordered)
+            Button("scanner_exper") {
+                scannerExper()
             }
             .buttonStyle(.bordered)
         }
