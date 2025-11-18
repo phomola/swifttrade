@@ -43,12 +43,12 @@ struct StocksView: View {
                 NSUbiquitousKeyValueStore.default.set(symbol, forKey: "symbol")
             }
             DatePicker("from", selection: $from, displayedComponents: [.date, .hourAndMinute])
-//                .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+                .environment(\.timeZone, TimeZone(secondsFromGMT: Calendar.current.timeZone.secondsFromGMT())!)
                 .onChange(of: from) {
                     NSUbiquitousKeyValueStore.default.set(from.timeIntervalSince1970, forKey: "from")
                 }
             DatePicker("to", selection: $to, displayedComponents: [.date, .hourAndMinute])
-//                .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+                .environment(\.timeZone, TimeZone(secondsFromGMT: Calendar.current.timeZone.secondsFromGMT())!)
                 .onChange(of: to) {
                     NSUbiquitousKeyValueStore.default.set(to.timeIntervalSince1970, forKey: "to")
                 }
@@ -58,11 +58,8 @@ struct StocksView: View {
                 }
             }
             Button("chart") {
-                //                if let from = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: from)) {
-                //                    if let to = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: to)) {
-                //                        let to = to.addingTimeInterval(24 * 60 * 60 - 1)
+                isWorking = true
                 Task {
-                    isWorking = true
                     defer { isWorking = false }
                     do {
                         let (candles, meta) = try await fetchYahooData(symbol: symbol, from: from, to: to, interval: interval)
@@ -76,14 +73,16 @@ struct StocksView: View {
                         print("error: \(error.localizedDescription)")
                         errorWrapper = ErrorWrapper(error: error, guidance: "Failed to fetch data.")
                     }
-                    //                        }
-                    //                    }
                 }
             }
             .buttonStyle(.borderedProminent)
             .disabled(isWorking || symbol.isEmpty)
             Button("js_exper") {
                 jsExper()
+            }
+            .buttonStyle(.bordered)
+            Button("scanner_exper") {
+                scannerExper()
             }
             .buttonStyle(.bordered)
         }
