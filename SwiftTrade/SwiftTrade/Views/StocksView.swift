@@ -25,11 +25,11 @@ struct StocksView: View {
         VStack {
             if let data = chartData {
                 Chart(data.candles) { candle in
-//                    ForEach(candles) { candle in
-                        LineMark(x: .value("timestamp", candle.timestamp), y: .value("close", candle.close))
+                    //                    ForEach(candles) { candle in
+                    LineMark(x: .value("timestamp", candle.timestamp), y: .value("close", candle.close))
                         .foregroundStyle(by: .value("type", "close"))
-//                        .symbol(by: .value("type", "close"))
-//                    }
+                    //                        .symbol(by: .value("type", "close"))
+                    //                    }
                 }
                 .chartYScale(domain: data.minClose...data.maxClose)
             }
@@ -42,11 +42,13 @@ struct StocksView: View {
             .onChange(of: symbol) {
                 NSUbiquitousKeyValueStore.default.set(symbol, forKey: "symbol")
             }
-            DatePicker("from", selection: $from, displayedComponents: .date)
+            DatePicker("from", selection: $from, displayedComponents: [.date, .hourAndMinute])
+                .environment(\.timeZone, TimeZone(secondsFromGMT: Calendar.current.timeZone.secondsFromGMT())!)
                 .onChange(of: from) {
                     NSUbiquitousKeyValueStore.default.set(from.timeIntervalSince1970, forKey: "from")
                 }
-            DatePicker("to", selection: $to, displayedComponents: .date)
+            DatePicker("to", selection: $to, displayedComponents: [.date, .hourAndMinute])
+                .environment(\.timeZone, TimeZone(secondsFromGMT: Calendar.current.timeZone.secondsFromGMT())!)
                 .onChange(of: to) {
                     NSUbiquitousKeyValueStore.default.set(to.timeIntervalSince1970, forKey: "to")
                 }
@@ -56,30 +58,33 @@ struct StocksView: View {
                 }
             }
             Button("chart") {
-                if let from = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: from)) {
-                    if let to = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: to)) {
-                        let to = to.addingTimeInterval(24 * 60 * 60 - 1)
-                        Task {
-                            isWorking = true
-                            defer { isWorking = false }
-                            do {
-                                let (candles, meta) = try await fetchYahooData(symbol: symbol, from: from, to: to, interval: interval)
-                                print("\(meta.currency) \(meta.fullExchangeName)")
-                                for candle in candles {
-                                    print("\(candle.timestamp) \(candle.volume) \(candle.low) \(candle.open) \(candle.close) \(candle.high)")
-                                }
-                                print(candles.count)
-                                chartData = ChartData(candles: candles)
-                            } catch {
-                                print("error: \(error.localizedDescription)")
-                                errorWrapper = ErrorWrapper(error: error, guidance: "Failed to fetch data.")
-                            }
+                isWorking = true
+                Task {
+                    defer { isWorking = false }
+                    do {
+                        let (candles, meta) = try await fetchYahooData(symbol: symbol, from: from, to: to, interval: interval)
+                        print("\(meta.currency) \(meta.fullExchangeName)")
+                        for candle in candles {
+                            print("\(candle.timestamp) \(candle.volume) \(candle.low) \(candle.open) \(candle.close) \(candle.high)")
                         }
+                        print(candles.count)
+                        chartData = ChartData(candles: candles)
+                    } catch {
+                        print("error: \(error.localizedDescription)")
+                        errorWrapper = ErrorWrapper(error: error, guidance: "Failed to fetch data.")
                     }
                 }
             }
             .buttonStyle(.borderedProminent)
             .disabled(isWorking || symbol.isEmpty)
+            Button("js_exper") {
+                jsExper()
+            }
+            .buttonStyle(.bordered)
+            Button("scanner_exper") {
+                scannerExper()
+            }
+            .buttonStyle(.bordered)
         }
         .padding()
         .onAppear {
