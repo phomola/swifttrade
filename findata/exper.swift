@@ -2,16 +2,15 @@ import Foundation
 
 class SampleStrategy: Strategy {
     let ma1Indicator = MovingAverage(window: 20)
-    let ma1Dataset = Dataset()
 
-    var datasets: [String: Dataset] { ["ma1": ma1Dataset] }
+    var datasets: [String: Dataset] { ["ma1": Dataset(data: ma1Indicator.values) ] }
 
     func setup(context: Context) {
         context.add(indicator: ma1Indicator)
     }
 
     func loop(context: Context) {
-        ma1Dataset.add(value: ma1Indicator.value)
+        // ma1Dataset.add(value: ma1Indicator.value)
     }
 }
 

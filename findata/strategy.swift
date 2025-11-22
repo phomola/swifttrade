@@ -1,7 +1,11 @@
 import Foundation
 
 class Dataset: CustomStringConvertible {
-    var data: [Float64] = []
+    var data: [Float64]
+
+    init(data: [Float64]) {
+        self.data = data
+    }
 
     func add(value: Float64) {
         data.append(value)
@@ -37,6 +41,15 @@ class Backtester {
     let data: [Float64]
     
     init(data: [Float64]) {
+        self.data = data
+    }
+
+    init(candles: [Candle]) {
+        var data: [Float64] = []
+        data.reserveCapacity(candles.count)
+        for candle in candles {
+            data.append(candle.close)
+        }
         self.data = data
     }
 
