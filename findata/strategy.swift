@@ -15,7 +15,7 @@ class Portfolio {
 }
 
 class Context {
-    var portfolio: Portfolio
+    let portfolio: Portfolio
     var indicators: [Indicator] = []
 
     init(portfolio: Portfolio) {
