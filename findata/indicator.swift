@@ -7,7 +7,7 @@ protocol Indicator {
 
 class MovingAverage: Indicator {
     var data: [Float64] = []
-    var window: Int
+    let window: Int
     var value: Float64 = 0.0
 
     init(window: Int) {
