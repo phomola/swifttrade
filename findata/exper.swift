@@ -1,8 +1,28 @@
 import Foundation
 
+class SampleStrategy: Strategy {
+    let ma1Indicator = MovingAverage(window: 20)
+
+    var datasets: [String: Dataset] { ["ma1": Dataset(data: ma1Indicator.values) ] }
+
+    func setup(context: Context) {
+        context.add(indicator: ma1Indicator)
+    }
+
+    func loop(context: Context) {
+        // ma1Dataset.add(value: ma1Indicator.value)
+    }
+}
+
 @main
 struct Main {
     static func main() async {
+        let backtester = Backtester(data: [1, 2, 3, 4, 5])
+        let datasets = backtester.run(strategy: SampleStrategy())
+        print(datasets)
+    }
+
+    static func main2() async {
         do {
             let formatter = DateFormatter()
             formatter.dateFormat = "d MMM y, HH:mm"
