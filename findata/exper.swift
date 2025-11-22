@@ -19,8 +19,8 @@ class SampleStrategy: Strategy {
 struct Main {
     static func main() async {
         let backtester = Backtester(data: [1, 2, 3, 4, 5])
-        backtester.run(strategy: SampleStrategy())
-        print(backtester.datasets)
+        let datasets = backtester.run(strategy: SampleStrategy())
+        print(datasets)
     }
 
     static func main2() async {
