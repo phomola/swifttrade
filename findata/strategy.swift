@@ -35,13 +35,12 @@ protocol Strategy {
 
 class Backtester {
     let data: [Float64]
-    var datasets: [String: Dataset] = [:]
-
+    
     init(data: [Float64]) {
         self.data = data
     }
 
-    func run(strategy: Strategy) {
+    func run(strategy: Strategy) -> [String: Dataset]{
         let portfolio = Portfolio()
         let context = Context(portfolio: portfolio)
         strategy.setup(context: context)
@@ -51,6 +50,6 @@ class Backtester {
             }
             strategy.loop(context: context)
         }  
-        datasets = strategy.datasets  
+        return strategy.datasets  
     }
 }
