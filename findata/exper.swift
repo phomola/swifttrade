@@ -3,6 +3,14 @@ import Foundation
 @main
 struct Main {
     static func main() async {
+        let indicator = MovingAverage(window: 3)
+        for x in [1.0, 2.0, 3.0, 4.0, 5.0] {
+            indicator.add(value: x)
+            print("\(x) \(indicator.value)")
+        }
+    }
+
+    static func main2() async {
         do {
             let formatter = DateFormatter()
             formatter.dateFormat = "d MMM y, HH:mm"
