@@ -1,8 +1,8 @@
 import Foundation
 
 protocol Indicator {
-    func add(value: Float64)
     var value: Float64 { get }
+    func add(value: Float64)
 }
 
 class MovingAverage: Indicator {
