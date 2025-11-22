@@ -1,8 +1,8 @@
 import Foundation
 
 class SampleStrategy: Strategy {
-    var ma1Indicator = MovingAverage(window: 20)
-    var ma1Dataset = Dataset()
+    let ma1Indicator = MovingAverage(window: 20)
+    let ma1Dataset = Dataset()
 
     var datasets: [String: Dataset] { ["ma1": ma1Dataset] }
 
