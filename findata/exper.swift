@@ -1,13 +1,26 @@
 import Foundation
 
+class SampleStrategy: Strategy {
+    var ma1Indicator = MovingAverage(window: 20)
+    var ma1Dataset = Dataset()
+
+    var datasets: [String: Dataset] { ["ma1": ma1Dataset] }
+
+    func setup(context: Context) {
+        context.add(indicator: ma1Indicator)
+    }
+
+    func loop(context: Context) {
+        ma1Dataset.add(value: ma1Indicator.value)
+    }
+}
+
 @main
 struct Main {
     static func main() async {
-        let indicator = MovingAverage(window: 3)
-        for x in [1.0, 2.0, 3.0, 4.0, 5.0] {
-            indicator.add(value: x)
-            print("\(x) \(indicator.value)")
-        }
+        let backtester = Backtester(data: [1, 2, 3, 4, 5])
+        backtester.run(strategy: SampleStrategy())
+        print(backtester.datasets)
     }
 
     static func main2() async {
