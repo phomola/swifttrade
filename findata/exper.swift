@@ -1,16 +1,20 @@
 import Foundation
 
 class SampleStrategy: Strategy {
-    let ma1Indicator = MovingAverage(window: 20)
+    let ma1Indicator = MovingAverage(window: 2)
+    let ma2Indicator = MovingAverage(window: 4)
+    let signal = Signal()
 
-    var datasets: [String: Dataset] { ["ma1": Dataset(data: ma1Indicator.values) ] }
+    var datasets: [String: Dataset] { ["ma1": Dataset(data: ma1Indicator.values), "ma2": Dataset(data: ma2Indicator.values) ] }
 
     func setup(context: Context) {
         context.add(indicator: ma1Indicator)
+        context.add(indicator: ma2Indicator)
     }
 
     func loop(context: Context) {
-        // ma1Dataset.add(value: ma1Indicator.value)
+        signal.set(value: ma1Indicator.value > ma2Indicator.value)
+        print("\(context.index) \(signal.change)")
     }
 }
 
@@ -18,7 +22,7 @@ class SampleStrategy: Strategy {
 struct Main {
     static func main() async {
         let backtester = Backtester(data: [1, 2, 3, 4, 5])
-        let result = backtester.run(strategy: SampleStrategy())
+        let result = backtester.run(strategy: SampleStrategy(), cash: 1_000)
         print(result.datasets)
     }
 
