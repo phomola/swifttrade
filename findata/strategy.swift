@@ -55,7 +55,23 @@ class Context {
         indicators.append(indicator)
     }
 
-    // func buy(for amount: Float64) -> Bool {}
+    func buy(for amount: Float64) -> Bool {
+        if amount <= cash {
+            cash -= amount
+            asset += amount / value
+            return true
+        }
+        return false
+    }
+
+    func sell(volume: Float64) -> Bool {
+        if volume <= asset {
+            asset -= volume
+            cash += volume * value
+            return true
+        }
+        return false
+    }
 }
 
 protocol Strategy {
@@ -82,6 +98,9 @@ class Backtester {
 
     struct Result {
         var datasets: [String: Dataset]
+        var cash: Float64
+        var asset: Float64
+        var value: Float64
     }
 
     func run(strategy: Strategy, cash: Float64) -> Result {
@@ -95,6 +114,6 @@ class Backtester {
             context.value = value
             strategy.loop(context: context)
         }  
-        return Result(datasets: strategy.datasets)
+        return Result(datasets: strategy.datasets, cash: context.cash, asset: context.asset, value: context.value)
     }
 }
