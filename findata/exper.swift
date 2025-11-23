@@ -14,7 +14,16 @@ class SampleStrategy: Strategy {
 
     func loop(context: Context) {
         signal.set(value: ma1Indicator.value > ma2Indicator.value)
-        print("\(context.index) \(signal.change)")
+        if signal.change == .up {
+            if context.buy(for: context.cash) {
+                print("\(context.index): bought, cash \(context.cash), asset \(context.asset), total \(context.asset * context.value)")
+            }
+        }
+        if signal.change == .down {
+            if context.sell(volume: context.asset) {
+                print("\(context.index): sold, cash \(context.cash), asset \(context.asset), total \(context.asset * context.value)")
+            }
+        }
     }
 }
 
@@ -23,7 +32,7 @@ struct Main {
     static func main() async {
         let backtester = Backtester(data: [1, 2, 3, 4, 5])
         let result = backtester.run(strategy: SampleStrategy(), cash: 1_000)
-        print(result.datasets)
+        print("cash \(result.cash), asset \(result.asset) - \(result.asset * result.value)")
     }
 
     static func main2() async {
