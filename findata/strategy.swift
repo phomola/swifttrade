@@ -53,7 +53,11 @@ class Backtester {
         self.data = data
     }
 
-    func run(strategy: Strategy) -> [String: Dataset]{
+    struct Result {
+        var datasets: [String: Dataset]
+    }
+
+    func run(strategy: Strategy) -> Result {
         let portfolio = Portfolio()
         let context = Context(portfolio: portfolio)
         strategy.setup(context: context)
@@ -63,6 +67,6 @@ class Backtester {
             }
             strategy.loop(context: context)
         }  
-        return strategy.datasets  
+        return Result(datasets: strategy.datasets)
     }
 }
