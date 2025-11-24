@@ -40,6 +40,10 @@ class Signal {
     }
 }
 
+enum IndicatorType {
+    case movingAverage(Int)
+}
+
 class Context {
     var cash: Float64
     var asset: Float64 = 0.0
@@ -53,6 +57,16 @@ class Context {
 
     func add(indicator: Indicator) {
         indicators.append(indicator)
+    }
+
+    func createIndicator(_ type: IndicatorType) -> Indicator {
+        let indicator: Indicator
+        switch type {
+        case .movingAverage(let window):
+            indicator = MovingAverage(window: window)
+        }
+        add(indicator: indicator)
+        return indicator
     }
 
     func buy(for amount: Float64) -> Bool {
@@ -76,7 +90,7 @@ class Context {
 
 protocol Strategy {
     var datasets: [String: Dataset] { get }
-    func setup(context: Context)
+    init(context: Context)
     func loop(context: Context)
 }
 
@@ -103,9 +117,9 @@ class Backtester {
         var value: Float64
     }
 
-    func run(strategy: Strategy, cash: Float64) -> Result {
+    func run<T: Strategy>(_ type: T.Type, cash: Float64) -> Result {
         let context = Context(cash: cash)
-        strategy.setup(context: context)
+        let strategy = type.init(context: context)
         for (index, value) in data.enumerated() {
             for indicator in context.indicators {
                 indicator.add(value: value)
