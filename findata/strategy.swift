@@ -119,10 +119,13 @@ class Context: NSObject, ContextJS {
     }
 }
 
-protocol Strategy {
+protocol StrategyBase {
     var datasets: [String: Dataset] { get }
-    init(context: Context)
     func loop(context: Context)
+}
+
+protocol Strategy: StrategyBase {
+    init(context: Context)
 }
 
 class Backtester {
@@ -152,18 +155,7 @@ class Backtester {
         if let strategy = JSStrategy(code: code) {
             let context = Context(cash: cash)
             strategy.setup(context: context)
-            for (index, value) in data.enumerated() {
-                for indicator in context.indicators {
-                    indicator.add(value: value)
-                }
-                for signal in context.signals {
-                    signal.set(value: signal.block())
-                }
-                context.index = index
-                context.value = value
-                strategy.loop(context: context)
-            }  
-            return Result(datasets: strategy.datasets, cash: context.cash, asset: context.asset, value: context.value)
+            return run(strategy: strategy, context: context)
         } else {
             return nil
         }
@@ -175,7 +167,7 @@ class Backtester {
         return run(strategy: strategy, context: context)
     }
 
-    func run(strategy: Strategy, context: Context) -> Result {
+    func run(strategy: StrategyBase, context: Context) -> Result {
         for (index, value) in data.enumerated() {
             for indicator in context.indicators {
                 indicator.add(value: value)
