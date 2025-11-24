@@ -30,7 +30,7 @@ class SampleStrategy: Strategy {
 @main
 struct Main {
     static func main() async {
-        if let strategy = JSStrategy(code: """
+        let code = """
             ma1Indicator = createMovingAverageIndicator(2)
             ma2Indicator = createMovingAverageIndicator(4)
             signal = createSignal()
@@ -49,12 +49,12 @@ struct Main {
                     sellVolume(context, context.asset)
                 }
             }
-            """) {
-            let backtester = Backtester(data: [1, 2, 3, 4, 5])
-            let result = backtester.run(strategy: strategy, cash: 1_000)
+            """
+        let backtester = Backtester(data: [1, 2, 3, 4, 5])
+        if let result = backtester.run(javascript: code, cash: 1_000) {
             print("cash \(result.cash), asset \(result.asset) - \(result.asset * result.value)")
         } else {
-            print("failed to get JS strategy")
+            print("failed to run JS strategy")
         }
     }
 

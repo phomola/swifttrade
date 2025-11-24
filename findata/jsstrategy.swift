@@ -1,7 +1,7 @@
 import Foundation
 import JavaScriptCore
 
-class JSStrategy: Strategy {
+class JSStrategy {
     let context: JSContext
     let setupJS: JSValue
     let loopJS: JSValue

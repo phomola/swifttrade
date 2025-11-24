@@ -132,9 +132,31 @@ class Backtester {
         var value: Float64
     }
 
+    func run(javascript code: String, cash: Float64) -> Result? {
+        if let strategy = JSStrategy(code: code) {
+            let context = Context(cash: cash)
+            strategy.setup(context: context)
+            for (index, value) in data.enumerated() {
+                for indicator in context.indicators {
+                    indicator.add(value: value)
+                }
+                context.index = index
+                context.value = value
+                strategy.loop(context: context)
+            }  
+            return Result(datasets: strategy.datasets, cash: context.cash, asset: context.asset, value: context.value)
+        } else {
+            return nil
+        }
+    }
+
     func run<T: Strategy>(_ type: T.Type, cash: Float64) -> Result {
         let context = Context(cash: cash)
         let strategy = type.init(context: context)
+        return run(strategy: strategy, context: context)
+    }
+
+    func run(strategy: Strategy, context: Context) -> Result {
         for (index, value) in data.enumerated() {
             for indicator in context.indicators {
                 indicator.add(value: value)
