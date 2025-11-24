@@ -1,15 +1,15 @@
 import Foundation
 
 class SampleStrategy: Strategy {
-    let ma1Indicator = MovingAverage(window: 2)
-    let ma2Indicator = MovingAverage(window: 4)
+    let ma1Indicator: Indicator
+    let ma2Indicator: Indicator
     let signal = Signal()
 
     var datasets: [String: Dataset] { ["ma1": Dataset(data: ma1Indicator.values), "ma2": Dataset(data: ma2Indicator.values) ] }
 
-    func setup(context: Context) {
-        context.add(indicator: ma1Indicator)
-        context.add(indicator: ma2Indicator)
+    required init(context: Context) {
+        ma1Indicator = context.createIndicator(.movingAverage(2))
+        ma2Indicator = context.createIndicator(.movingAverage(4))
     }
 
     func loop(context: Context) {
@@ -60,7 +60,7 @@ struct Main {
 
     static func main2() async {
         let backtester = Backtester(data: [1, 2, 3, 4, 5])
-        let result = backtester.run(strategy: SampleStrategy(), cash: 1_000)
+        let result = backtester.run(SampleStrategy.self, cash: 1_000)
         print("cash \(result.cash), asset \(result.asset) - \(result.asset * result.value)")
     }
 
