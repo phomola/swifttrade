@@ -1,4 +1,5 @@
 import Foundation
+import JavaScriptCore
 
 class Dataset: CustomStringConvertible {
     var data: [Float64]
@@ -14,7 +15,12 @@ class Dataset: CustomStringConvertible {
     var description: String { data.description }
 }
 
-class Signal {
+@objc protocol SignalJS: JSExport {
+    var isUp: Bool { get }
+    var isDown: Bool { get }
+}
+
+class Signal: NSObject, SignalJS {
     var previousValue: Bool?
     var currentValue: Bool?
     
@@ -38,9 +44,18 @@ class Signal {
         }
         return .undetermined
     }
+    var isUp: Bool { return change == .up }
+    var isDown: Bool { return change == .down }
 }
 
-class Context {
+@objc protocol ContextJS: JSExport {
+    var cash: Float64 { get }
+    var asset: Float64 { get }
+    var index: Int { get }
+    var value: Float64 { get }
+}
+
+class Context: NSObject, ContextJS {
     var cash: Float64
     var asset: Float64 = 0.0
     var index: Int = 0
