@@ -37,11 +37,10 @@ struct Main {
             function setup(context) {
                 ma1Indicator = createMovingAverageIndicator(context, 2)
                 ma2Indicator = createMovingAverageIndicator(context, 4)
-                signal = createSignal()
+                signal = createSignal(context, () => ma1Indicator.value > ma2Indicator.value)
             }
 
             function loop(context) {
-                setSignal(signal, ma1Indicator.value > ma2Indicator.value)
                 if (signal.isUp) {
                     buyFor(context, context.cash)
                 }

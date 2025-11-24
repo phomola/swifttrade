@@ -10,24 +10,16 @@ class JSStrategy {
     init?(code: String) {
         if let context = JSContext(virtualMachine: JSVirtualMachine()) {
             let movingAverage: @convention(block) (Context, Int) -> Indicator = { context, window in
-                context.createIndicator(.movingAverage(window))
+                context.createIndicator(.movingAverage(window: window))
             }
             context.setObject(movingAverage, forKeyedSubscript: "createMovingAverageIndicator" as NSString)
 
-            // let addIndicator: @convention(block) (Context, Indicator) -> Void = { context, indicator in
-            //     context.add(indicator: indicator)
-            // }
-            // context.setObject(addIndicator, forKeyedSubscript: "addIndicator" as NSString)
-
-            let createSignal: @convention(block) () -> Signal = {
-                Signal()
+            let createSignal: @convention(block) (Context, JSValue) -> Signal = { context, block in
+                context.createSignal {
+                    block.call(withArguments: []).toBool()
+                }
             }
             context.setObject(createSignal, forKeyedSubscript: "createSignal" as NSString)
-
-            let setSignal: @convention(block) (Signal, Bool) -> Void = { signal, value in
-                signal.set(value: value)
-            }
-            context.setObject(setSignal, forKeyedSubscript: "setSignal" as NSString)
 
             let buyFor: @convention(block) (Context, Float64) -> Bool = { context, amount in
                 context.buy(for: amount)

@@ -156,6 +156,9 @@ class Backtester {
                 for indicator in context.indicators {
                     indicator.add(value: value)
                 }
+                for signal in context.signals {
+                    signal.set(value: signal.block())
+                }
                 context.index = index
                 context.value = value
                 strategy.loop(context: context)
