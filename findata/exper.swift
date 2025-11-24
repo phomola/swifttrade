@@ -34,7 +34,6 @@ class SampleStrategy: Strategy {
 struct Main {
     static func main() async {
         let code = """
-
             function setup(context) {
                 ma1Indicator = createMovingAverageIndicator(context, 2)
                 ma2Indicator = createMovingAverageIndicator(context, 4)
