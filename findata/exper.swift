@@ -31,11 +31,11 @@ class SampleStrategy: Strategy {
 struct Main {
     static func main() async {
         let code = """
-            ma1Indicator = createMovingAverageIndicator(2)
-            ma2Indicator = createMovingAverageIndicator(4)
             signal = createSignal()
 
             function setup(context) {
+            ma1Indicator = createMovingAverageIndicator(2)
+            ma2Indicator = createMovingAverageIndicator(4)
                 addIndicator(context, ma1Indicator)
                 addIndicator(context, ma2Indicator)
             }
