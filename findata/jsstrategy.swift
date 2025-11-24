@@ -9,15 +9,15 @@ class JSStrategy {
 
     init?(code: String) {
         if let context = JSContext(virtualMachine: JSVirtualMachine()) {
-            let movingAverage: @convention(block) (Int) -> MovingAverage = { window in
-                MovingAverage(window: window)
+            let movingAverage: @convention(block) (Context, Int) -> Indicator = { context, window in
+                context.createIndicator(.movingAverage(window))
             }
             context.setObject(movingAverage, forKeyedSubscript: "createMovingAverageIndicator" as NSString)
 
-            let addIndicator: @convention(block) (Context, Indicator) -> Void = { context, indicator in
-                context.add(indicator: indicator)
-            }
-            context.setObject(addIndicator, forKeyedSubscript: "addIndicator" as NSString)
+            // let addIndicator: @convention(block) (Context, Indicator) -> Void = { context, indicator in
+            //     context.add(indicator: indicator)
+            // }
+            // context.setObject(addIndicator, forKeyedSubscript: "addIndicator" as NSString)
 
             let createSignal: @convention(block) () -> Signal = {
                 Signal()
