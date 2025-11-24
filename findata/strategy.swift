@@ -17,6 +17,11 @@ class Dataset: CustomStringConvertible {
 class Signal {
     var previousValue: Bool?
     var currentValue: Bool?
+    let block: () -> Bool
+
+    init(block: @escaping () -> Bool) {
+        self.block = block
+    }
     
     func set(value: Bool) {
         previousValue = currentValue
@@ -41,7 +46,7 @@ class Signal {
 }
 
 enum IndicatorType {
-    case movingAverage(Int)
+    case movingAverage(window: Int)
 }
 
 class Context {
@@ -50,6 +55,7 @@ class Context {
     var index: Int = 0
     var value: Float64 = 0.0
     var indicators: [Indicator] = []
+    var signals: [Signal] = []
 
     init(cash: Float64) {
         self.cash = cash
@@ -57,6 +63,10 @@ class Context {
 
     func add(indicator: Indicator) {
         indicators.append(indicator)
+    }
+
+    func add(signal: Signal) {
+        signals.append(signal)
     }
 
     func createIndicator(_ type: IndicatorType) -> Indicator {
@@ -67,6 +77,12 @@ class Context {
         }
         add(indicator: indicator)
         return indicator
+    }
+
+    func createSignal(block: @escaping () -> Bool) -> Signal {
+        let signal = Signal(block: block)
+        add(signal: signal)
+        return signal
     }
 
     func buy(for amount: Float64) -> Bool {
@@ -123,6 +139,9 @@ class Backtester {
         for (index, value) in data.enumerated() {
             for indicator in context.indicators {
                 indicator.add(value: value)
+            }
+            for signal in context.signals {
+                signal.set(value: signal.block())
             }
             context.index = index
             context.value = value
