@@ -3,26 +3,29 @@ import Foundation
 class SampleStrategy: Strategy {
     let ma1Indicator: Indicator
     let ma2Indicator: Indicator
-    let signal = Signal()
+    let signal: Signal
 
     var datasets: [String: Dataset] { ["ma1": Dataset(data: ma1Indicator.values), "ma2": Dataset(data: ma2Indicator.values) ] }
 
     required init(context: Context) {
-        ma1Indicator = context.createIndicator(.movingAverage(2))
-        ma2Indicator = context.createIndicator(.movingAverage(4))
+        let ma1Indicator = context.createIndicator(.movingAverage(window: 2))
+        let ma2Indicator = context.createIndicator(.movingAverage(window: 4))
+        self.ma1Indicator = ma1Indicator
+        self.ma2Indicator = ma2Indicator
+        self.signal = context.createSignal { ma1Indicator.value > ma2Indicator.value }
     }
 
     func loop(context: Context) {
-        signal.set(value: ma1Indicator.value > ma2Indicator.value)
-        if signal.change == .up {
+        switch signal.change {
+        case .up:
             if context.buy(for: context.cash) {
                 print("\(context.index): bought, cash \(context.cash), asset \(context.asset), total \(context.asset * context.value)")
             }
-        }
-        if signal.change == .down {
+        case .down:
             if context.sell(volume: context.asset) {
                 print("\(context.index): sold, cash \(context.cash), asset \(context.asset), total \(context.asset * context.value)")
             }
+        default: break
         }
     }
 }
