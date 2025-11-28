@@ -1,4 +1,5 @@
 import Foundation
+import JavaScriptCore
 
 class Dataset: CustomStringConvertible {
     var data: [Float64]
@@ -14,7 +15,12 @@ class Dataset: CustomStringConvertible {
     var description: String { data.description }
 }
 
-class Signal {
+@objc protocol SignalJS: JSExport {
+    var isUp: Bool { get }
+    var isDown: Bool { get }
+}
+
+class Signal: NSObject, SignalJS {
     var previousValue: Bool?
     var currentValue: Bool?
     let block: () -> Bool
@@ -43,13 +49,22 @@ class Signal {
         }
         return .undetermined
     }
+    var isUp: Bool { return change == .up }
+    var isDown: Bool { return change == .down }
+}
+
+@objc protocol ContextJS: JSExport {
+    var cash: Float64 { get }
+    var asset: Float64 { get }
+    var index: Int { get }
+    var value: Float64 { get }
 }
 
 enum IndicatorType {
     case movingAverage(window: Int)
 }
 
-class Context {
+class Context: NSObject, ContextJS {
     var cash: Float64
     var asset: Float64 = 0.0
     var index: Int = 0
@@ -104,10 +119,13 @@ class Context {
     }
 }
 
-protocol Strategy {
+protocol StrategyBase {
     var datasets: [String: Dataset] { get }
-    init(context: Context)
     func loop(context: Context)
+}
+
+protocol Strategy: StrategyBase {
+    init(context: Context)
 }
 
 class Backtester {
@@ -133,9 +151,23 @@ class Backtester {
         var value: Float64
     }
 
+    func run(javascript code: String, cash: Float64) -> Result? {
+        if let strategy = JSStrategy(code: code) {
+            let context = Context(cash: cash)
+            strategy.setup(context: context)
+            return run(strategy: strategy, context: context)
+        } else {
+            return nil
+        }
+    }
+
     func run<T: Strategy>(_ type: T.Type, cash: Float64) -> Result {
         let context = Context(cash: cash)
         let strategy = type.init(context: context)
+        return run(strategy: strategy, context: context)
+    }
+
+    func run(strategy: StrategyBase, context: Context) -> Result {
         for (index, value) in data.enumerated() {
             for indicator in context.indicators {
                 indicator.add(value: value)

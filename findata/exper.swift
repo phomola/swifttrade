@@ -33,12 +33,37 @@ class SampleStrategy: Strategy {
 @main
 struct Main {
     static func main() async {
+        let code = """
+            function setup(context) {
+                ma1Indicator = createMovingAverageIndicator(context, 2)
+                ma2Indicator = createMovingAverageIndicator(context, 4)
+                signal = createSignal(context, () => ma1Indicator.value > ma2Indicator.value)
+            }
+
+            function loop(context) {
+                if (signal.isUp) {
+                    buyFor(context, context.cash)
+                }
+                if (signal.isDown) {
+                    sellVolume(context, context.asset)
+                }
+            }
+            """
+        let backtester = Backtester(data: [1, 2, 3, 4, 5])
+        if let result = backtester.run(javascript: code, cash: 1_000) {
+            print("cash \(result.cash), asset \(result.asset) - \(result.asset * result.value)")
+        } else {
+            print("failed to run JS strategy")
+        }
+    }
+
+    static func main2() async {
         let backtester = Backtester(data: [1, 2, 3, 4, 5])
         let result = backtester.run(SampleStrategy.self, cash: 1_000)
         print("cash \(result.cash), asset \(result.asset) - \(result.asset * result.value)")
     }
 
-    static func main2() async {
+    static func main3() async {
         do {
             let formatter = DateFormatter()
             formatter.dateFormat = "d MMM y, HH:mm"

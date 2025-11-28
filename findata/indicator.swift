@@ -1,12 +1,17 @@
 import Foundation
+import JavaScriptCore
 
-protocol Indicator {
+@objc protocol IndicatorJS: JSExport {
+    var value: Float64 { get }
+}
+
+@objc protocol Indicator: IndicatorJS {
     var value: Float64 { get }
     var values: [Float64] { get }
     func add(value: Float64)
 }
 
-class MovingAverage: Indicator {
+class MovingAverage: NSObject, Indicator {
     var data: [Float64] = []
     let window: Int
     var value: Float64 = 0.0
@@ -25,4 +30,6 @@ class MovingAverage: Indicator {
         }
         values.append(self.value)
     }
+
+    override var description: String { "moving average indicator (window=\(window))" }
 }
