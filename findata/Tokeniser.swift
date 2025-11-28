@@ -38,9 +38,6 @@ func tokenizer(string: String) -> [Token] {
             continue
         }
         tokens.append(.symbol(value: String(char), position: Position(index: index)))
-//        if let text = scanner.scanUpToCharacters(from: .newlines) {
-//            print("line: <\(text)>")
-//        }
     }
     return tokens
 }
