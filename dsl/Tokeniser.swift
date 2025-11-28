@@ -11,7 +11,7 @@ enum Token {
     case symbol(value: String, position: Position)
 }
 
-func tokenizer(string: String) -> [Token] {
+func tokenize(string: String) -> [Token] {
     let scanner = Scanner(string: string)
     scanner.charactersToBeSkipped = .whitespacesAndNewlines
     var tokens: [Token] = []
@@ -41,4 +41,3 @@ func tokenizer(string: String) -> [Token] {
     }
     return tokens
 }
-
