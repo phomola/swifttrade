@@ -6,6 +6,13 @@
 
 import Foundation
 
-enum ParseError {
+enum ParseError: CustomStringConvertible {
     case syntaxError(message: String, position: Position)
+
+    var description: String {
+        switch self {
+        case .syntaxError(message: let message, position: let position):
+            return "\(message) (\(position))"
+        }
+    }
 }
