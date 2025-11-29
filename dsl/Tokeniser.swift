@@ -9,9 +9,10 @@ enum Token {
     case number(value: Int, position: Position)
     case string(value: String, position: Position)
     case symbol(value: String, position: Position)
+    case eof(position: Position)
 }
 
-func tokenizer(string: String) -> [Token] {
+func tokenize(string: String) -> [Token] {
     let scanner = Scanner(string: string)
     scanner.charactersToBeSkipped = .whitespacesAndNewlines
     var tokens: [Token] = []
@@ -39,6 +40,6 @@ func tokenizer(string: String) -> [Token] {
         }
         tokens.append(.symbol(value: String(char), position: Position(index: index)))
     }
+    tokens.append(.eof(position:  Position(index: scanner.currentIndex)))
     return tokens
 }
-
