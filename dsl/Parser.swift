@@ -4,6 +4,12 @@
 // (RAG can be tested with vector extensions for PostgreSQL or SQLite).
 // Code written in the DSL can also be translated into WASM and run in a browser within our backtesting engine.
 
+// How DSL code is interpreted/transpiled:
+// - all functions and methods are asynchronous and throwing,
+// - all objects are actors to avoid race conditions,
+// - as a consequence, all built-in functions need be asynchronous and throwing,
+// - built-in objects needn't be actors but exposed interfaces need be safe.
+
 import Foundation
 
 enum ParseError: CustomStringConvertible {
