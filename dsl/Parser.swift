@@ -13,13 +13,13 @@
 import Foundation
 
 enum ParseError: Error, CustomStringConvertible {
-    case noTokensError
+    case noTokens
     case notImplemented
     case syntaxError(message: String, position: Position)
 
     var description: String {
         switch self {
-        case .noTokensError:
+        case .noTokens:
             return "no tokens provided"
         case .notImplemented:
             return "not implemented"
@@ -69,7 +69,7 @@ func parse(code: String) throws -> [StatementNode] {
     throw ParseError.syntaxError(message: "expected EOF", position: token.position)
 }
 
-class Tokens {
+final class Tokens {
     let tokens: [Token]
     var index: Int
 
@@ -79,7 +79,7 @@ class Tokens {
     }
 
     func first(checkForEof: Bool = true) throws -> Token {
-        if index >= tokens.count { throw ParseError.noTokensError }
+        if index >= tokens.count { throw ParseError.noTokens }
         let token = tokens[index]
         if checkForEof {
             if case let .eof(position: position) = token { throw ParseError.syntaxError(message: "unexpected EOF", position: position) }
