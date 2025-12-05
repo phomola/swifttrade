@@ -22,9 +22,13 @@ final class ToolManager {
     let embedding: NLEmbedding
     var tools: [ToolInfo]
     
-    init(tools: [ToolInfo] = []) {
-        self.embedding = NLEmbedding.sentenceEmbedding(for: .english)!
-        self.tools = tools
+    init?(tools: [ToolInfo] = []) {
+        if let embedding = NLEmbedding.sentenceEmbedding(for: .english) {
+            self.embedding = embedding
+            self.tools = tools
+        } else {
+            return nil
+        }
     }
     
     func addTool(name: String, description: String) {
@@ -48,7 +52,7 @@ final class ToolManager {
 }
 
 func dyntoolsExper() {
-    let toolManager = ToolManager()
+    guard let toolManager = ToolManager() else { print("failed to get tool manager"); return }
     toolManager.addTool(name: "weather", description: """
         Fetches weather forecasts.
         Arguments:
