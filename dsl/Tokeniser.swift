@@ -25,6 +25,21 @@ enum Token {
                 return position
         }
     }
+
+    var value: String {
+        switch self {
+            case .identifier(value: let value, position: _):
+                return value
+            case .number(value: let value, position: _):
+                return "\(value)"
+            case .string(value: let value, position: _):
+                return value
+            case .symbol(value: let value, position: _):
+                return value
+            case .eof(position: _):
+                return "<EOF>"
+        }
+    }
 }
 
 func tokenize(string: String) -> [Token] {

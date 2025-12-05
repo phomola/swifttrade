@@ -29,36 +29,6 @@ enum ParseError: Error, CustomStringConvertible {
     }
 }
 
-protocol StatementNode: CustomStringConvertible {}
-
-struct VarAssignmentNode: StatementNode {
-    let variable: String
-    let expression: ExpressionNode
-
-    var description: String { return "var \(variable) = \(expression)" }
-}
-
-protocol ExpressionNode: CustomStringConvertible {}
-
-struct IntegerNode: ExpressionNode {
-    let value: Int
-
-    var description: String { return "\(value)" }
-}
-
-struct FloatNode: ExpressionNode {
-    let value: Double
-
-    var description: String { return "\(value)" }
-}
-
-struct StringNode: ExpressionNode {
-    let value: String
-
-    var description: String { return "\(value)" }
-}
-
-
 func parse(code: String) throws -> [StatementNode] {
     let tokens = Tokens(tokens: tokenize(string: code))
     let statements = try parse_top_level(tokens: tokens)
@@ -69,7 +39,7 @@ func parse(code: String) throws -> [StatementNode] {
     throw ParseError.syntaxError(message: "expected EOF", position: token.position)
 }
 
-final class Tokens {
+final class Tokens: CustomStringConvertible {
     let tokens: [Token]
     var index: Int
 
@@ -89,6 +59,14 @@ final class Tokens {
 
     func advance() {
         index += 1
+    }
+
+    var description: String {
+        var values = [String]()
+        for token in tokens[index..<tokens.count] {
+            values.append(token.value)
+        }
+        return values.description
     }
 }
 
@@ -127,7 +105,7 @@ func parse_expression(tokens: Tokens) throws -> ExpressionNode {
     let token = try tokens.first()
     if case let .number(value: value1, position: _) = token {
         tokens.advance()
-        let token = try tokens.first()
+        let token = try tokens.first(checkForEof: false)
         if case let .symbol(value: value, position: _) = token {
             if value == "." {
                 tokens.advance()
