@@ -84,7 +84,9 @@ func fetchYahooData(symbol: String, from: Date, to: Date, interval: Interval) as
     var candles: [Candle] = []
     candles.reserveCapacity(timestamps.count)
     for (i, timestamp) in timestamps.enumerated() {
-        candles.append(Candle(timestamp: Date(timeIntervalSince1970: Float64(timestamp)), volume: volume[i], open: open[i], close: close[i], low: low[i], high: high[i]))
+        if volume[i] > 0 {
+            candles.append(Candle(index: i, timestamp: Date(timeIntervalSince1970: Float64(timestamp)), volume: volume[i], open: open[i], close: close[i], low: low[i], high: high[i]))
+        }
     }
     return (candles, response.chart.result[0].meta)
 }

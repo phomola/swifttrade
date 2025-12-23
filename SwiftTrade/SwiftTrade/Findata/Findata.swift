@@ -33,6 +33,7 @@ protocol DataMeta {
 }
 
 struct Candle: Identifiable {
+    let index: Int
     let timestamp: Date
     let volume: Float64
     let open: Float64
@@ -40,5 +41,5 @@ struct Candle: Identifiable {
     let low: Float64
     let high: Float64
     
-    var id: Date { timestamp }
+    var id: Int { index }
 }
