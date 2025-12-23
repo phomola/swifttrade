@@ -20,18 +20,45 @@ struct StocksView: View {
     @State private var isWorking = false
     @State private var errorWrapper: ErrorWrapper?
     @State private var chartData: ChartData?
+    private let dayFormatter: DateFormatter
+    
+    init() {
+        self.dayFormatter = DateFormatter()
+        self.dayFormatter.dateStyle = .medium
+        self.dayFormatter.timeStyle = .none
+    }
 
     var body: some View {
         VStack {
             if let data = chartData {
-                Chart(data.candles) { candle in
-                    //                    ForEach(candles) { candle in
-                    LineMark(x: .value("timestamp", candle.timestamp), y: .value("close", candle.close))
-                        .foregroundStyle(by: .value("type", "close"))
-                    //                        .symbol(by: .value("type", "close"))
-                    //                    }
+                GeometryReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: true) {
+                        Chart(data.candles) { candle in
+                            //LineMark(x: .value("index", candle.index), y: .value("close", candle.close))
+                            //.foregroundStyle(by: .value("type", "close"))
+                            //.symbol(by: .value("type", "close"))
+                            RectangleMark(x: .value("timestamp", candle.index), yStart: .value("open", candle.open), yEnd: .value("close", candle.close), width: 4)
+                                .foregroundStyle(candle.close > candle.open ? .green : .red)
+                            RectangleMark(x: .value("timestamp", candle.index), yStart: .value("low", candle.low), yEnd: .value("high", candle.high), width: 1)
+                                .foregroundStyle(candle.close > candle.open ? .green : .red)
+                        }
+                        .frame(width: Double(data.candles.count) * 8)
+                        .chartXScale(domain: 0...(data.candles.count - 1))
+                        .chartYScale(domain: data.minClose...data.maxClose)
+                        .chartXAxis {
+                            AxisMarks(preset: .aligned, position: .bottom, values: Array(0..<data.candles.count)) { value in
+                                AxisValueLabel() {
+                                    if value.index % 10 == 0 {
+                                        Text("\(dayFormatter.string(from: data.candles[value.index].timestamp))")
+                                    } else {
+                                        Text("")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .defaultScrollAnchor(.center, for: .alignment)
                 }
-                .chartYScale(domain: data.minClose...data.maxClose)
             }
             //TextField("symbol", text: $symbol, prompt: Text("symbol"))
             Picker("symbol", selection: $symbol) {
