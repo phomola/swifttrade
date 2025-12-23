@@ -13,14 +13,15 @@ struct ChartData {
     var minClose: Float64 {
         var min = Float64.greatestFiniteMagnitude
         for candle in candles {
-            if candle.close < min { min = candle.close }
+            if candle.low < min { min = candle.low }
         }
         return min
     }
+    
     var maxClose: Float64 {
         var max = -Float64.greatestFiniteMagnitude
         for candle in candles {
-            if candle.close > max { max = candle.close }
+            if candle.high > max { max = candle.high }
         }
         return max
     }
