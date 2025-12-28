@@ -114,6 +114,10 @@ struct StocksView: View {
                 scannerExper()
             }
             .buttonStyle(.bordered)
+            Button("dyntools_exper") {
+                dyntoolsExper()
+            }
+            .buttonStyle(.bordered)
         }
         .padding()
         .onAppear {
