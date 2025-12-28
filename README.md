@@ -1,7 +1,7 @@
 # swifttrade
 **Trading in Swift**
 
-We'll soon release the first public beta version. If interested, get in touch to obtain an account.
+We'll soon release the first public beta version (via TestFlight). If interested, get in touch to obtain an account.
 
 <img src="media/architecture.png" width="500"/>
 
