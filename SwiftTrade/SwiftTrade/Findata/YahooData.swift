@@ -73,7 +73,10 @@ func fetchYahooData(symbol: String, from: Date, to: Date, interval: Interval) as
     var request = URLRequest(url: url)
     request.setValue("Mozilla/5.0", forHTTPHeaderField: "User-Agent")
     request.httpMethod = "GET"
-    let (data, _) = try await URLSession.shared.data(for: request)
+    let (data, httpResponse) = try await URLSession.shared.data(for: request)
+    if let response = httpResponse as? HTTPURLResponse, response.statusCode != 200 {
+        throw RuntimeError.errorResponse(statusCode: response.statusCode)
+    }
     let response = try JSONDecoder().decode(YahooResponse.self, from: data)
     let timestamps = response.chart.result[0].timestamp
     let volume = response.chart.result[0].indicators.quote[0].volume
