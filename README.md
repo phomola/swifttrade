@@ -6,3 +6,5 @@ We'll soon release the first public beta version (via TestFlight). If interested
 <img src="media/architecture.png" width="500"/>
 
 For experiments with tools for Apple's on-device LLMs, check out [this app](https://apps.apple.com/us/app/aiscript/id6755296055).
+
+For more information on the AI used here follow [this repo](https://github.com/phomola/quantal).
