@@ -5,12 +5,12 @@
 //  Created by Petr Homola on 02/11/2025.
 //
 
-import Foundation
 import SwiftUI
 
 enum RuntimeError: Error {
     case badUrl
     case badDateTime
+    case errorResponse(statusCode: Int)
 }
 
 enum Interval: Identifiable {
@@ -30,6 +30,7 @@ enum Interval: Identifiable {
 protocol DataMeta {
     var currency: String { get }
     var fullExchangeName: String { get }
+    var timezone: String { get }
 }
 
 struct Candle: Identifiable {
