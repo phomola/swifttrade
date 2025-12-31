@@ -7,4 +7,4 @@ We'll soon release the first public beta version (via TestFlight). If interested
 
 For experiments with tools for Apple's on-device LLMs, check out [this app](https://apps.apple.com/us/app/aiscript/id6755296055).
 
-For more information on the AI used here follow [this repo](https://github.com/phomola/quantal).
+For more information on the AI used here follow [this Quantal repo](https://github.com/phomola/quantal).
