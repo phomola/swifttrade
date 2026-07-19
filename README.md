@@ -10,3 +10,5 @@ For experiments with tools for Apple's on-device LLMs, check out [this app](http
 For more information on the AI used here follow [this Quantal repo](https://github.com/phomola/quantal).
 
 **Update**: Apple Intelligence (especially Private Cloud Compute) is a game changer. It allowed us to implement our agent quickly, improve actor-based concurrency and integrate the app with Siri. The first demo version can be found [here](https://github.com/phomola/quantal/blob/dmg-alpha/Quantal.dmg).
+
+A public beta version will be available in September 2026 for macOS/iOS 27.
